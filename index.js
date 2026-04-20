@@ -1,6 +1,48 @@
 window.addEventListener("load", function() {		
 	animateGems();
 	parallaxGems();
+
+	let banner;
+	if(banner = document.querySelector(".mainContainer-parallax")) {
+		banner.classList.add("mainContainer-showup");
+		if (!window.matchMedia("(hover: none)").matches) {
+			let box = banner.querySelector(".mainContainer-box-trigger");
+			if(!box) return;
+			box.addEventListener("mouseenter", function() {
+				setTimeout(() => {
+					banner.classList.add("mainContainer-hovered");
+				}, 0);
+			});
+			box.addEventListener("mouseleave", function() {
+				banner.classList.remove("mainContainer-hovered");
+				banner.classList.add("mainContainer-unhover");
+				setTimeout(() => {
+					banner.classList.remove("mainContainer-unhover");
+				}, 500);
+			});
+			
+		}
+		else {
+			let box = banner.querySelector(".mainContainer-box");
+			if(!box) return;
+			box.addEventListener("click", function(event) {
+				event.preventDefault();
+				event.stopPropagation();
+				if(!banner.classList.contains("mainContainer-hovered")) {
+					setTimeout(() => {
+						banner.classList.add("mainContainer-hovered");
+					}, 0);
+				}
+				else {
+					banner.classList.remove("mainContainer-hovered");
+					banner.classList.add("mainContainer-unhover");
+					setTimeout(() => {
+						banner.classList.remove("mainContainer-unhover");
+					}, 500);
+				}
+			});
+		}
+	}
 }, false);
 
 gsap.registerPlugin(ScrollTrigger);
@@ -108,55 +150,6 @@ function animateGems() {
 		})
 	}
 }
-
-function closePage(sender) {
-	event.preventDefault();
-	event.stopPropagation();
-	let pages = sender.closest(".mainContainer-pages");
-	if(!pages) return;
-	pages.classList.remove("mainContainer-pages-active");
-	if(pages.querySelector(".mainContainer-page-active")) {
-		pages.querySelector(".mainContainer-page-active").style.display = 'none';
-		pages.querySelector(".mainContainer-page-active").classList.remove("mainContainer-page-active");
-	}
-	pages.style.display = 'none';
-
-	_togglePlay(pages.closest(".mainContainer").querySelector("video"));
-}
-
-function showPage(button, num, event) {
-	console.log(event);
-	event.preventDefault();
-	event.stopPropagation();
-	let mainContainer = button.closest(".mainContainer");
-	if(!mainContainer) return;
-	let pages = mainContainer.querySelector(".mainContainer-pages");
-	if(!pages) return;
-
-	_togglePlay(mainContainer.querySelector("video"));
-
-	pages.style.display = 'block';
-
-	let buttonsContainer = button.closest(".mainContainer-buttons");
-	if(buttonsContainer.querySelector("[aria-expanded=true]")) {
-		buttonsContainer.querySelector("[aria-expanded=true]").setAttribute('aria-expanded', false);
-	}
-	button.setAttribute('aria-expanded', true);
-
-	setTimeout(() => {
-		pages.classList.add("mainContainer-pages-active");
-		if(pages.querySelector(".mainContainer-page-active")) {
-			pages.querySelector(".mainContainer-page-active").style.display = 'none';
-			pages.querySelector(".mainContainer-page-active").classList.remove("mainContainer-page-active");
-		}
-
-		pages.getElementsByClassName("mainContainer-page")[num-1].style.display = 'block';
-		setTimeout(() => {
-			pages.getElementsByClassName("mainContainer-page")[num-1].classList.add("mainContainer-page-active");
-		}, 30);
-	}, 15)
-}
-
 function toggleMute(sender) {
 	event.preventDefault();
 	event.stopPropagation();
